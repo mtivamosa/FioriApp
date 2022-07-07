@@ -1,0 +1,57 @@
+_schema-version: "3.2"
+ID: AppFiori
+version: 0.0.1
+modules:
+- name: AppFiori-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: AppFiori-destination-service
+    parameters:
+      content-target: true
+  - name: AppFiori_html_repo_host
+    parameters:
+      service-key:
+        name: AppFiori_html_repo_host-key
+  - name: uaa_AppFiori
+    parameters:
+      service-key:
+        name: uaa_AppFiori-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: cvosoft_AppFiori_html_repo_host
+          ServiceInstanceName: AppFiori-html5-app-host-service
+          ServiceKeyName: AppFiori_html_repo_host-key
+          sap.cloud.service: cvosoft
+        - Authentication: OAuth2UserTokenExchange
+          Name: cvosoft_uaa_AppFiori
+          ServiceInstanceName: AppFiori-xsuaa-service
+          ServiceKeyName: uaa_AppFiori-key
+          sap.cloud.service: cvosoft
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+resources:
+- name: AppFiori-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      version: 1.0.0
+    service: destination
+    service-name: AppFiori-destination-service
+    service-plan: lite
+- name: AppFiori_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: AppFiori-html5-app-host-service
+    service-plan: app-host
+- name: uaa_AppFiori
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: AppFiori-xsuaa-service
+    service-plan: application
